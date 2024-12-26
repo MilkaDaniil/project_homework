@@ -22,7 +22,7 @@ public class PlaywrightTests
     public async Task SetUp()
     {
         _playwright = await Playwright.CreateAsync();
-        _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = false });
+        _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = true });
         _page = await _browser.NewPageAsync();
 
         // Pages
