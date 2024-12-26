@@ -1,0 +1,45 @@
+name: Playwright tests for Saucelabs App
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      username:
+        description: "Enter your username"
+        required: true
+      password:
+        description: "Enter your password"
+        required: true
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      
+      - name: Build & Install
+        run: dotnet build
+      
+      - name: Ensure browsers are installed
+        run: pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
+      
+      - name: Validate Credentials
+        run: |
+          echo "Validating credentials..."
+          echo "Username: ${{ secrets.USERNAME }}"
+          echo "Password: ********"
+        env:
+          USERNAME: ${{ github.event.inputs.username }}
+          PASSWORD: ${{ github.event.inputs.password }}
+      
+      # Run your tests
+      - name: Run your tests
+        run: dotnet test
